@@ -1,18 +1,13 @@
 import cv2
 import numpy as np
-img = cv2.imread("lemonhead-crop.png")
+img = cv2.imread("head pic.png")
 img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-img = cv2.resize(img,dsize=(img.shape[0]//4,img.shape[1]//4))
-# img = np.array([
-#     [255,0],
-#     [0,0],
-#     [0,255],
-#     [0,0]
-# ])
-#print(img.shape)
+outputWidth = 30
+ratio = 4*outputWidth/img.shape[1]
+img = cv2.resize(img,dsize=(int(ratio*img.shape[1]),int(ratio*img.shape[0])))
 output=""
-for y in range(0,img.shape[0]-1,4):
-    for x in range(0,img.shape[1]-1,2):
+for y in range(0,img.shape[0]-img.shape[0]%4,4):
+    for x in range(0,img.shape[1]-img.shape[1]%2,2):
         selectedPixels = img[y:y+4,x:x+2]#4x2 area that braille text encompasses(⡀ to ⣿)
         #braille characters start at unicde 0x2800 and end at 0x28ff. the first 8-dot braille characer is 2840
         #try something with bitwise operators and adding to characters to generate the unicode characters
@@ -32,7 +27,7 @@ for y in range(0,img.shape[0]-1,4):
         for y1 in range(y,y+3):
             for x1 in range(x,x+2):
                 selectedPixel = img[y1,x1]
-                if selectedPixel>125:
+                if selectedPixel>127:
                     modifier = modifier | 0b1<<count
                 count+=1
         character = base+modifier
